@@ -73,7 +73,7 @@
 
 /// loop
 ///
-fn loop_func () -> () {
+fn loop_func() -> () {
     loop {
         println!("again!");
     }
@@ -83,7 +83,7 @@ fn loop_func () -> () {
 /// 
 /// while
 /// 
-fn while_func () -> () {
+fn while_func() -> () {
     while true {
         println!("again!");
     }
