@@ -334,10 +334,159 @@
 ///         }
 ///     }
 /// }
-
-
-
-
+/// 
+/// 
+/// 
+/// ######################################################################################################################################################
+///  关联类型 和 默认类型参数
+/// ######################################################################################################################################################
+/// 
+/// 
+/// 
+///  use std::ops::Add;
+///  
+///  struct Millimeters(u32);
+///  struct Meters(u32);
+///  
+///  trait Add<Rhs=Self> {   // Rhs : right hand side ; Rhs=Self 表示： 如果实现 Add trait 时不指定 Rhs 的具体类型，Rhs 的类型将是默认的 Self 类型
+///                          // Rhs=Self 叫做：  默认类型参数
+///  
+///      type Output;        // 关联类型： 与 trait 关联的  【类型占位符】， 在实现 trait 时，必须指定具体的类型
+///  
+///      fn add(self, rhs: Rhs) -> Self::Output;
+///  }
+///  
+///  
+///  impl Add<Meters> for Millimeters {
+///      type Output = Millimeters;
+///  
+///      fn add(self, other: Meters) -> Millimeters {
+///          Millimeters(self.0 + (other.0 * 1000))
+///      }
+///  }
+///  
+/// 
+/// 
+/// ######################################################################################################################################################
+///  同时  实现多个 具有同名方法  的 trait
+/// ###################################################################################################################################################### 
+/// 
+/// 
+/// 
+/// trait Pilot {
+///     fn fly(&self);
+/// }
+/// 
+/// trait Wizard {
+///     fn fly(&self);
+/// }
+/// 
+/// struct Human;
+/// 
+/// impl Pilot for Human {                                  //  实现 trait Pilot 的 fn fly(&self)
+///     fn fly(&self) {
+///         println!("This is your captain speaking.");
+///     }
+/// }
+/// 
+/// impl Wizard for Human {                                 //  实现 trait Wizard 的 fn fly(&self)
+///     fn fly(&self) {
+///         println!("Up!");
+///     }
+/// }
+/// 
+/// impl Human {
+///     fn fly(&self) {                                     //  实现 自己 的 fn fly(&self)
+///         println!("*waving arms furiously*");
+///     }
+/// }
+/// 
+/// fn main() {
+///     let person = Human;
+///     person.fly();                                       // 【只能调用到  自己  的 fn fly(&self)】
+/// }
+/// 
+/// 
+/// ---------------------------------------------------------------------------
+/// 
+/// 如果想 都调用到 则用：  
+/// 
+/// 
+/// 
+/// 
+///  fn main() {
+///      let person = Human;
+/// 
+///      Pilot::fly(&person);
+///      Wizard::fly(&person);
+///      person.fly();
+///  }
+///  
+///  ---------------------------------------------------------------------------
+///  
+/// 【 完全限定语法】
+/// 
+/// <Type as Trait>::function(receiver_if_method, next_arg, ...);
+/// 
+/// 
+///  trait Animal {
+///      fn baby_name() -> String;
+///  }
+///  
+///  struct Dog;
+///  
+///  impl Dog {
+///      fn baby_name() -> String {
+///          String::from("Spot")
+///      }
+///  }
+///  
+///  impl Animal for Dog {
+///      fn baby_name() -> String {
+///          String::from("puppy")
+///      }
+///  }
+///  
+///  fn main() { 
+///      println!("A baby dog is called a {}", Dog::baby_name());                // Dog 的
+///  
+///      // println!("A baby dog is called a {}", Animal::baby_name());          // 错的， trait 的方法直接调， 编译器无法推断出 它的实现结构
+///  
+///      println!("A baby dog is called a {}", <Dog as Animal>::baby_name());    // trait Animal 的
+///  }
+///  
+///  
+/// 
+/// 
+/// ######################################################################################################################################################
+///  在 [外部类型] 上实现 [外部 trait]
+/// 
+/// 
+/// 如： Vec 上 实现 trait Display  (Vec 和 Display 及 我们当前代码所在，相互为  [外部])
+/// 
+/// 解决方案：
+/// 
+///  (使用 newtype 模式 去包装 Vec， 然后在 newtype 上实现 Display)
+/// ###################################################################################################################################################### 
+///  
+///  
+///  
+///  use std::fmt;
+///  
+///  struct Wrapper(Vec<String>);    // 定义 newtype ： Wrapper(Vec<String>)   [newtype:  使用原有类型实现的新类型， 这里原有类型是 Vec]
+///  
+///  impl fmt::Display for Wrapper { // 再用 Wrapper 去实现 trait Display
+/// 
+///      fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+///          write!(f, "[{}]", self.0.join(", "))
+///      }
+///  }
+///  
+///  fn main() {
+///      let w = Wrapper(vec![String::from("hello"), String::from("world")]);
+///      println!("w = {}", w);
+///  }
+///  
 
 
 
