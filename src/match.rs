@@ -150,6 +150,61 @@
 ///         count += 1;
 ///     }
 /// }
+/// 
+/// 
+/// ----------------------------------------------------------------------------------------------
+/// 
+/// 
+/// 还可以：
+/// 
+/// 
+///
+/// fn main() {
+/// 
+///     // 3 个 condition
+///     //
+///     let favorite_color: Option<&str> = None;
+///     let is_tuesday = false;
+///     let age: Result<u8, _> = "34".parse();
+/// 
+///     if let Some(color) = favorite_color {  // 先匹配 favorite_color
+/// 
+///         println!("Using your favorite color, {color}, as the background");
+/// 
+///     } else if is_tuesday {                  // 再判断 is_tuesday
+///         println!("Tuesday is green day!");
+/// 
+///     } else if let Ok(age) = age {           // 再匹配 age
+///         if age > 30 {
+///             println!("Using purple as the background color");
+///         } else {
+///             println!("Using orange as the background color");
+///         }
+///     } else {
+///         println!("Using blue as the background color");
+///     }
+/// }
+/// 
+/// 
+/// 
+/// ######################################################################################################################################################
+///  while let
+/// 
+/// (只要模式匹配就一直进行 while 循环)
+/// ###################################################################################################################################################### 
+/// 
+/// 
+///  fn main() {
+///      let mut stack = Vec::new();
+///  
+///      stack.push(1);
+///      stack.push(2);
+///      stack.push(3);
+///  
+///      while let Some(top) = stack.pop() { // 只要 pop 出来的内容 匹配 Some(x) ， 就一直循环
+///          println!("{}", top);
+///      }
+///  }
 
 
 
