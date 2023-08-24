@@ -18,15 +18,15 @@
 ///  
 ///  fn main() {
 /// 
-///      thread::spawn(|| {       // 创建 线程, 并传入 闭包
+///      thread::spawn(|| {       // 创建 线程,  并传入 闭包
 ///          for i in 1..10 {
-///              println!("hi number {} from the spawned thread!", i);
+///              println!("hi number {} from the spawned thread!",  i);
 ///              thread::sleep(Duration::from_millis(1));
 ///          }
 ///      });
 ///  
 ///      for i in 1..5 {
-///          println!("hi number {} from the main thread!", i);
+///          println!("hi number {} from the main thread!",  i);
 ///          thread::sleep(Duration::from_millis(1));
 ///      }
 ///  }
@@ -43,13 +43,13 @@
 ///  fn main() {
 ///      let handle = thread::spawn(|| {
 ///          for i in 1..10 {
-///              println!("hi number {} from the spawned thread!", i);
+///              println!("hi number {} from the spawned thread!",  i);
 ///              thread::sleep(Duration::from_millis(1));
 ///          }
 ///      });
 ///  
 ///      for i in 1..5 {
-///          println!("hi number {} from the main thread!", i);
+///          println!("hi number {} from the main thread!",  i);
 ///          thread::sleep(Duration::from_millis(1));
 ///      }
 ///  
@@ -68,7 +68,7 @@
 ///    
 ///    fn main() {
 /// 
-///        let (tx, rx) = mpsc::channel();              // 创建 chan        (mpsc 是 multiple producer, single consumer )
+///        let (tx,  rx) = mpsc::channel();              // 创建 chan        (mpsc 是 multiple producer,  single consumer )
 ///    
 ///        thread::spawn(move || {
 ///            let val = String::from("hi");
@@ -76,7 +76,7 @@
 ///        });
 ///    
 ///        let received = rx.recv().unwrap();           // 主线程从 chan  读取消息
-///        println!("Got: {}", received);
+///        println!("Got: {}",  received);
 ///    }
 /// 
 /// 
@@ -94,17 +94,17 @@
 ///  fn main() {
 ///      // --snip--
 ///  
-///      let (tx, rx) = mpsc::channel();                    // 创建 chan
+///      let (tx,  rx) = mpsc::channel();                    // 创建 chan
 ///  
 ///      let tx1 = tx.clone();                              // clone tx 句柄
 /// 
 /// 
 ///      thread::spawn(move || {
 ///          let vals = vec![
-///              String::from("hi"),
-///              String::from("from"),
-///              String::from("the"),
-///              String::from("thread"),
+///              String::from("hi"), 
+///              String::from("from"), 
+///              String::from("the"), 
+///              String::from("thread"), 
 ///          ];
 ///  
 ///          for val in vals {
@@ -115,10 +115,10 @@
 ///  
 ///      thread::spawn(move || {
 ///          let vals = vec![
-///              String::from("more"),
-///              String::from("messages"),
-///              String::from("for"),
-///              String::from("you"),
+///              String::from("more"), 
+///              String::from("messages"), 
+///              String::from("for"), 
+///              String::from("you"), 
 ///          ];
 ///  
 ///          for val in vals {
@@ -128,7 +128,7 @@
 ///      });
 ///  
 ///      for received in rx {                               // 类似 Go 的  for in chan
-///          println!("Got: {}", received);
+///          println!("Got: {}",  received);
 ///      }
 ///  
 ///      // --snip--
@@ -150,33 +150,33 @@
 ///  use std::sync::Mutex;
 ///  
 ///  fn main() {
-///      let m = Mutex::new(5); // 为 整型 5 添加 mutex  (类型系统确保了我们在使用 m 中的值之前获取锁。m 的类型是 Mutex<i32> 而不是 i32，所以 必须 获取锁才能使用这个 i32 值)
+///      let m = Mutex::new(5); // 为 整型 5 添加 mutex  (类型系统确保了我们在使用 m 中的值之前获取锁.m 的类型是 Mutex<i32> 而不是 i32, 所以 必须 获取锁才能使用这个 i32 值)
 ///  
 ///      {
-///          let mut num = m.lock().unwrap();  // lock 调用 返回 一个叫做 MutexGuard 的智能指针。这个智能指针实现了 Deref 来指向其内部数据；其也提供了一个 Drop 实现当 MutexGuard 离开作用域时自动释放锁
+///          let mut num = m.lock().unwrap();  // lock 调用 返回 一个叫做 MutexGuard 的智能指针.这个智能指针实现了 Deref 来指向其内部数据；其也提供了一个 Drop 实现当 MutexGuard 离开作用域时自动释放锁
 ///          *num = 6;
 ///      }   // 所得 释放 是自动的 (离开作用域时自动释放锁)
 ///  
-///      println!("m = {:?}", m);   // 丢弃了锁之后，可以打印出互斥器的值，并发现能够将其内部的 i32 改为 6
+///      println!("m = {:?}",  m);   // 丢弃了锁之后, 可以打印出互斥器的值, 并发现能够将其内部的 i32 改为 6
 ///  }
 /// 
 /// 
 /// ---------------------------------------------------------------------------------------------------------
 /// 
 /// 
-///  use std::sync::{Arc, Mutex};
+///  use std::sync::{Arc,  Mutex};
 ///  use std::thread;
 ///  
 ///  fn main() {
-///      let counter = Arc::new(Mutex::new(0));                     // 初始化一个 Mutex<i32>, 初始值为 0  【使用 Arc 是因为 需要将 metux 弄到 多个线程中， 需要 多所有权智能指针的 引用计数】
+///      let counter = Arc::new(Mutex::new(0));                     // 初始化一个 Mutex<i32>,  初始值为 0  【使用 Arc 是因为 需要将 metux 弄到 多个线程中,  需要 多所有权智能指针的 引用计数】
 ///      let mut handles = vec![];                                  // 一个 泛型 vec
 ///  
 ///      for _ in 0..10 {                                           // 循环 10 次
 ///         
-///          let counter = Arc::clone(&counter);                    // 追加一次 引用计数，并将 Rc 传递进线程中
+///          let counter = Arc::clone(&counter);                    // 追加一次 引用计数, 并将 Rc 传递进线程中
 ///          let handle = thread::spawn(move || {                   // 启用 线程
 /// 
-///              let mut num = counter.lock().unwrap();             // 获取 lock, 返回 Mutex<i32> 中的 &mut i32
+///              let mut num = counter.lock().unwrap();             // 获取 lock,  返回 Mutex<i32> 中的 &mut i32
 ///  
 ///              *num += 1;                                         // 
 ///          });
@@ -187,7 +187,7 @@
 ///          handle.join().unwrap();
 ///      }
 ///  
-///      println!("Result: {}", *counter.lock().unwrap());          // 这里再次 lock 是因为 (lock 调用 返回 一个叫做 MutexGuard 的智能指针。这个智能指针实现了 Deref 来指向其内部数据)    
+///      println!("Result: {}",  *counter.lock().unwrap());          // 这里再次 lock 是因为 (lock 调用 返回 一个叫做 MutexGuard 的智能指针.这个智能指针实现了 Deref 来指向其内部数据)    
 ///  }
 /// 
 ///
@@ -202,9 +202,9 @@
 /// 
 /// 
 /// 
-/// 上例子中， counter 是 【不可变】 的，不过可以获取其 内部值 的【可变引用】；这意味着 Mutex<T> 提供了内部可变性，就像 RefCell 系列类型那样。
+/// 上例子中,  counter 是 【不可变】 的, 不过可以获取其 内部值 的【可变引用】；这意味着 Mutex<T> 提供了内部可变性, 就像 RefCell 系列类型那样.
 /// 
-/// (正如 RefCell<T> 可以改变 Rc<T> 中的内容那样，同样的可以使用 Mutex<T> 来改变 Arc<T> 中的内容)
+/// (正如 RefCell<T> 可以改变 Rc<T> 中的内容那样, 同样的可以使用 Mutex<T> 来改变 Arc<T> 中的内容)
 /// 
 /// 
 /// 
@@ -217,7 +217,7 @@
 /// 
 /// 
 /// 
-/// 基础类型都是 Send/Sync  的，且完全由 Send/Sync 的类型组成的类型也是 Send/Sync  的
+/// 基础类型都是 Send/Sync  的, 且完全由 Send/Sync 的类型组成的类型也是 Send/Sync  的
 /// 
 /// std::marker 中的 Sync 和 Send trait
 /// 
@@ -230,9 +230,9 @@
 /// 
 /// 
 /// 
-/// Send 标记 trait 表明实现了 Send 的类型值的所有权可以在线程间传送。几乎所有的 Rust 类型都是Send 的
+/// Send 标记 trait 表明实现了 Send 的类型值的所有权可以在线程间传送.几乎所有的 Rust 类型都是Send 的
 /// 
-/// 但也有例外：   Rc<T>：这是不能 Send 的，因为如果克隆了 Rc<T> 的值并尝试将克隆的所有权转移到另一个线程，这两个线程都可能同时更新引用计数。为此，Rc<T> 被实现为用于 【单线程场景】
+/// 但也有例外:   Rc<T>:这是不能 Send 的, 因为如果克隆了 Rc<T> 的值并尝试将克隆的所有权转移到另一个线程, 这两个线程都可能同时更新引用计数.为此, Rc<T> 被实现为用于 【单线程场景】
 /// 
 /// 
 /// 
@@ -247,17 +247,17 @@
 /// Sync 标记 trait 表明一个实现了 Sync 的类型可以安全的在多个线程中拥有其值的引用
 /// 
 /// 
-/// 对于任意类型 T，如果 &T（T 的不可变引用）是 Send 的话 T 就是 Sync 的，这意味着其引用就可以安全的发送到另一个线程。
+/// 对于任意类型 T, 如果 &T(T 的不可变引用)是 Send 的话 T 就是 Sync 的, 这意味着其引用就可以安全的发送到另一个线程.
 /// 
 /// 
 /// 
 /// 
 /// 
 /// 
-/// Rc<T> 也不是 Sync 的，出于其不是 Send 相同的原因。
-/// RefCell<T>和 【Cell<T> 系列】 类型不是 Sync 的。
-/// RefCell<T> 在【运行时】所进行的借用检查也不是线程安全的。
-/// Mutex<T> 是 Sync 的。
+/// Rc<T> 也不是 Sync 的, 出于其不是 Send 相同的原因.
+/// RefCell<T>和 【Cell<T> 系列】 类型不是 Sync 的.
+/// RefCell<T> 在【运行时】所进行的借用检查也不是线程安全的.
+/// Mutex<T> 是 Sync 的.
 /// 
 /// 
 /// 

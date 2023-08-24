@@ -20,7 +20,7 @@
 ///  use std::thread;
 ///  use std::time::Duration;
 ///  
-///  fn generate_workout(intensity: u32, random_number: u32) {
+///  fn generate_workout(intensity: u32,  random_number: u32) {
 ///      
 /// 
 ///      let expensive_closure = |num: u32| -> u32 {   // 将闭包赋值给 变量
@@ -30,14 +30,14 @@
 ///      };
 ///  
 ///      if intensity < 25 {
-///          println!("Today, do {} pushups!", expensive_closure(intensity));
-///          println!("Next, do {} situps!", expensive_closure(intensity));
+///          println!("Today,  do {} pushups!",  expensive_closure(intensity));
+///          println!("Next,  do {} situps!",  expensive_closure(intensity));
 ///      } else {
 ///          if random_number == 3 {
 ///              println!("Take a break today! Remember to stay hydrated!");
 ///          } else {
 ///              println!(
-///                  "Today, run for {} minutes!",
+///                  "Today,  run for {} minutes!", 
 ///                  expensive_closure(intensity)
 ///              );
 ///          }
@@ -48,7 +48,7 @@
 ///      let simulated_user_specified_value = 10;
 ///      let simulated_random_number = 7;
 ///  
-///      generate_workout(simulated_user_specified_value, simulated_random_number);
+///      generate_workout(simulated_user_specified_value,  simulated_random_number);
 ///  }
 /// 
 /// 
@@ -66,14 +66,14 @@
 /// 
 /// 
 /// fn main() {
-///     let list = vec![1, 2, 3];
-///     println!("Before defining closure: {:?}", list);
+///     let list = vec![1,  2,  3];
+///     println!("Before defining closure: {:?}",  list);
 /// 
-///     let only_borrows = || println!("From closure: {:?}", list);  // 捕获  【不可变引用的闭包】
+///     let only_borrows = || println!("From closure: {:?}",  list);  // 捕获  【不可变引用的闭包】
 /// 
-///     println!("Before calling closure: {:?}", list);
+///     println!("Before calling closure: {:?}",  list);
 ///     only_borrows();
-///     println!("After calling closure: {:?}", list);
+///     println!("After calling closure: {:?}",  list);
 /// }
 /// 
 /// 
@@ -83,13 +83,13 @@
 /// 
 /// 
 /// fn main() {
-///     let mut list = vec![1, 2, 3];
-///     println!("Before defining closure: {:?}", list);
+///     let mut list = vec![1,  2,  3];
+///     println!("Before defining closure: {:?}",  list);
 /// 
 ///     let mut borrows_mutably = || list.push(7);  // 捕获  【可变引用的闭包】
 /// 
 ///     borrows_mutably();
-///     println!("After calling closure: {:?}", list);
+///     println!("After calling closure: {:?}",  list);
 /// }
 /// 
 /// 
@@ -102,10 +102,10 @@
 /// use std::thread;
 /// 
 /// fn main() {
-///     let list = vec![1, 2, 3];
-///     println!("Before defining closure: {:?}", list);
+///     let list = vec![1,  2,  3];
+///     println!("Before defining closure: {:?}",  list);
 /// 
-///     thread::spawn(move || println!("From thread: {:?}", list))  // 捕获  【获取所有权的闭包】   使用  move 关键字 转移所有权
+///     thread::spawn(move || println!("From thread: {:?}",  list))  // 捕获  【获取所有权的闭包】   使用  move 关键字 转移所有权
 ///         .join()
 ///         .unwrap();
 /// }
@@ -119,25 +119,25 @@
 /// ######################################################################################################################################################  
 /// 
 /// 
-///   1、 FnOnce:   适用于能被调用一次的闭包, 所有闭包都至少实现了这个 trait, 因为所有闭包都能被调用. 
-///                 (一个 会 将捕获的值移出闭包体的闭包只实现 FnOnce trait, 这是因为它只能被调用一次.)
+///   1、 FnOnce:   适用于能被调用一次的闭包,  所有闭包都至少实现了这个 trait,  因为所有闭包都能被调用. 
+///                 (一个 会 将捕获的值移出闭包体的闭包只实现 FnOnce trait,  这是因为它只能被调用一次.)
 /// 
-///   2、 FnMut:    适用于 不会 将捕获的值移出闭包体的闭包, 但它可能会修改被捕获的值. 这类闭包可以被调用多次.
+///   2、 FnMut:    适用于 不会 将捕获的值移出闭包体的闭包,  但它可能会修改被捕获的值. 这类闭包可以被调用多次.
 /// 
-///   3、 Fn:       适用于  既不将  被捕获的值移出闭包体  也不修改  被捕获的值的闭包, 当然也包括不从环境中捕获值的闭包. 
-///                 (这类闭包可以被调用多次而不改变它们的环境, 这在会多次并发调用闭包的场景中十分重要.)
+///   3、 Fn:       适用于  既不将  被捕获的值移出闭包体  也不修改  被捕获的值的闭包,  当然也包括不从环境中捕获值的闭包. 
+///                 (这类闭包可以被调用多次而不改变它们的环境,  这在会多次并发调用闭包的场景中十分重要.)
 /// 
 /// ----------------------------------------------------------------------------------------------------------------------
 /// 
 /// 
 ///  impl<T> Option<T> {
-///      pub fn unwrap_or_else<F>(self, f: F) -> T
+///      pub fn unwrap_or_else<F>(self,  f: F) -> T
 ///      where
 ///          F: FnOnce() -> T
 ///      {
 ///          match self {
-///              Some(x) => x,
-///              None => f(),
+///              Some(x) => x, 
+///              None => f(), 
 ///          }
 ///      }
 ///  }

@@ -13,14 +13,14 @@
 ///      x + 1
 ///  }
 ///  
-///  fn do_twice(f: fn(i32) -> i32, arg: i32) -> i32 {
+///  fn do_twice(f: fn(i32) -> i32,  arg: i32) -> i32 {
 ///      f(arg) + f(arg)
 ///  }
 ///  
 ///  fn main() {
-///      let answer = do_twice(add_one, 5);
+///      let answer = do_twice(add_one,  5);
 ///  
-///      println!("The answer is: {}", answer);
+///      println!("The answer is: {}",  answer);
 ///  }
 /// 
 /// 
@@ -28,7 +28,7 @@
 /// 
 /// 返回  闭包
 /// 
-/// fn returns_closure() -> Box<dyn Fn(i32) -> i32> {    // dyn 是因为 类型 Fn(i32) -> i32 在编译时 无法知道大小，而声明的   ( Fn(i32) -> i32  是个 Sized trait)
+/// fn returns_closure() -> Box<dyn Fn(i32) -> i32> {    // dyn 是因为 类型 Fn(i32) -> i32 在编译时 无法知道大小, 而声明的   ( Fn(i32) -> i32  是个 Sized trait)
 ///     Box::new(|x| x + 1)
 /// }
 /// 

@@ -9,18 +9,18 @@
 /// 
 /// 
 /// enum Coin {
-///     Penny,
-///     Nickel,
-///     Dime,
-///     Quarter,
+///     Penny, 
+///     Nickel, 
+///     Dime, 
+///     Quarter, 
 /// }
 /// 
 /// fn value_in_cents(coin: Coin) -> u8 {
 ///     match coin {
-///         Coin::Penny => 1,
-///         Coin::Nickel => 5,
-///         Coin::Dime => 10,
-///         Coin::Quarter => 25,
+///         Coin::Penny => 1, 
+///         Coin::Nickel => 5, 
+///         Coin::Dime => 10, 
+///         Coin::Quarter => 25, 
 ///     }
 /// }
 /// 
@@ -35,25 +35,25 @@
 /// 
 /// #[derive(Debug)]
 /// enum UsState {
-///     Alabama,
-///     Alaska,
+///     Alabama, 
+///     Alaska, 
 ///     // --snip--
 /// }
 /// 
 /// enum Coin {
-///     Penny,
-///     Nickel,
-///     Dime,
-///     Quarter(UsState),
+///     Penny, 
+///     Nickel, 
+///     Dime, 
+///     Quarter(UsState), 
 /// }
 /// 
 /// fn value_in_cents(coin: Coin) -> u8 {
 ///     match coin {
-///         Coin::Penny => 1,
-///         Coin::Nickel => 5,
-///         Coin::Dime => 10,
+///         Coin::Penny => 1, 
+///         Coin::Nickel => 5, 
+///         Coin::Dime => 10, 
 ///         Coin::Quarter(state) => {
-///             println!("State quarter from {:?}!", state);
+///             println!("State quarter from {:?}!",  state);
 ///             25
 ///         }
 ///     }
@@ -68,19 +68,19 @@
 ///  if let
 /// ###################################################################################################################################################### 
 /// 
-///  if let 语法让我们以一种不那么冗长的方式结合 if 和 let，来处理只匹配一个模式的值而忽略其他模式的情况
+///  if let 语法让我们以一种不那么冗长的方式结合 if 和 let, 来处理只匹配一个模式的值而忽略其他模式的情况
 /// 
-///  (可以认为 if let 是 match 的一个语法糖，它当值匹配某一模式时执行代码而忽略所有其他值)
+///  (可以认为 if let 是 match 的一个语法糖, 它当值匹配某一模式时执行代码而忽略所有其他值)
 /// ----------------------------------------------------------------------------------------------
 /// 
 /// 
-/// 将：
+/// 将:
 /// 
 /// fn main() {
 ///     let config_max = Some(3u8);
 ///     match config_max {
-///         Some(max) => println!("The maximum is configured to be {}", max),
-///         _ => (),
+///         Some(max) => println!("The maximum is configured to be {}",  max), 
+///         _ => (), 
 ///     }
 /// }
 /// 
@@ -90,7 +90,7 @@
 /// fn main() {
 ///     let config_max = Some(3u8);
 ///     if let Some(max) = config_max {
-///         println!("The maximum is configured to be {}", max);
+///         println!("The maximum is configured to be {}",  max);
 ///     }
 /// }
 /// 
@@ -102,24 +102,24 @@
 /// 
 /// #[derive(Debug)]
 /// enum UsState {
-///     Alabama,
-///     Alaska,
+///     Alabama, 
+///     Alaska, 
 ///     // --snip--
 /// }
 /// 
 /// enum Coin {
-///     Penny,
-///     Nickel,
-///     Dime,
-///     Quarter(UsState),
+///     Penny, 
+///     Nickel, 
+///     Dime, 
+///     Quarter(UsState), 
 /// }
 /// 
 /// fn main() {
 ///     let coin = Coin::Penny;
 ///     let mut count = 0;
 ///     match coin {
-///         Coin::Quarter(state) => println!("State quarter from {:?}!", state),
-///         _ => count += 1,
+///         Coin::Quarter(state) => println!("State quarter from {:?}!",  state), 
+///         _ => count += 1, 
 ///     }
 /// }
 /// 
@@ -129,23 +129,23 @@
 /// 
 /// #[derive(Debug)]
 /// enum UsState {
-///     Alabama,
-///     Alaska,
+///     Alabama, 
+///     Alaska, 
 ///     // --snip--
 /// }
 /// 
 /// enum Coin {
-///     Penny,
-///     Nickel,
-///     Dime,
-///     Quarter(UsState),
+///     Penny, 
+///     Nickel, 
+///     Dime, 
+///     Quarter(UsState), 
 /// }
 /// 
 /// fn main() {
 ///     let coin = Coin::Penny;
 ///     let mut count = 0;
 ///     if let Coin::Quarter(state) = coin {
-///         println!("State quarter from {:?}!", state);
+///         println!("State quarter from {:?}!",  state);
 ///     } else {
 ///         count += 1;
 ///     }
@@ -155,7 +155,7 @@
 /// ----------------------------------------------------------------------------------------------
 /// 
 /// 
-/// 还可以：
+/// 还可以:
 /// 
 /// 
 ///
@@ -165,11 +165,11 @@
 ///     //
 ///     let favorite_color: Option<&str> = None;
 ///     let is_tuesday = false;
-///     let age: Result<u8, _> = "34".parse();
+///     let age: Result<u8,  _> = "34".parse();
 /// 
 ///     if let Some(color) = favorite_color {  // 先匹配 favorite_color
 /// 
-///         println!("Using your favorite color, {color}, as the background");
+///         println!("Using your favorite color,  {color},  as the background");
 /// 
 ///     } else if is_tuesday {                  // 再判断 is_tuesday
 ///         println!("Tuesday is green day!");
@@ -201,8 +201,8 @@
 ///      stack.push(2);
 ///      stack.push(3);
 ///  
-///      while let Some(top) = stack.pop() { // 只要 pop 出来的内容 匹配 Some(x) ， 就一直循环
-///          println!("{}", top);
+///      while let Some(top) = stack.pop() { // 只要 pop 出来的内容 匹配 Some(x) ,  就一直循环
+///          println!("{}",  top);
 ///      }
 ///  }
 
