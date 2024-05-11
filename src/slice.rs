@@ -3,7 +3,7 @@
 /// ********************************************************************
 /// 
 /// 
-///     let s = String::from("hello world");
+///     let s = String::from("hello world");  --------------->  String 类型；    "hello world" 是 &str 类型
 /// 
 ///     let hello = &s[0..5];
 ///     let world = &s[6..11];
@@ -14,7 +14,7 @@
 /// 
 /// 
 ///   fn main() {
-///       let mut s = String::from("hello world");  // 可变 引用 s
+///       let mut s = String::from("hello world");  // 可变 引用 s   【错误】
 ///   
 ///       let word = first_word(&s);  // 这里  不可变 String 引用 所有权转移到 word 
 ///   

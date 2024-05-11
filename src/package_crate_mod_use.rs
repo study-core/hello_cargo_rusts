@@ -1,4 +1,7 @@
-/// 【注意】:Rust 出于安全的考虑, 默认情况下, 所有的类型都是 【私有化】 的, 包括函数、方法、结构体、枚举、常量, 是的, 就连模块本身也是私有化的.
+/// 【注意】:Rust 出于安全的考虑, 默认情况下, 所有的类型都是 【私有化】 的, 包括函数、方法、结构体、枚举、常量, 是的, 就连 【模块本身】 也是私有化的.
+/// 
+/// 
+///  但是  enum 的字段可是 pub 的哦， struct 的字段也是??
 /// 
 /// 
 /// ######################################################################################################################################################
@@ -23,6 +26,10 @@
 /// ###################################################################################################################################################### 
 /// 
 /// 
+/// 
+///                 Rust编译器只接受一个.rs文件作为输入，并且只生成一个crate。这一点要牢记。
+///
+///                 生成的crate分两种，源文件中有main函数会生成可执行文件，无main函数则生成库。
 /// 
 /// 
 /// 
@@ -372,3 +379,265 @@ fn main() {
 }
 
 
+/// ##########################################################################################################################
+/// ##########################################################################################################################
+/// ##########################################################################################################################
+/// ##########################################################################################################################
+/// ##########################################################################################################################
+/// ##########################################################################################################################
+/// 
+/// 
+///             rust 编译器只会接收 一个 rs 文件，并且只生成一个crate要么是 main.rs (bin crate) 要么是 lib.rs (lib crate)；
+///                                               (生成的crate分两种，源文件中有main函数会生成可执行文件，无main函数则生成库。)
+/// 
+/// 
+/// 
+/// 
+/// 
+///             Rust的模块就是命名空间，用关键词mod表示。它的作用是把一个crate的代码划分成可管理的部分。
+///             每一个crate都有一个顶层的匿名根命名空间, 根空间下面的命名空间可以任意嵌套，这样构成一个树形结构。
+///             
+/// 
+///             Rust编译器给我提供了一个将单个文件拆成多个文件的机制。
+/// 
+///             编译器的机制决定，除了mod.rs外，每一个 [文件] 和 [目录 (配合 mod.rs ??)] 都是一个模块。
+/// 
+///             
+/// 
+///             【mod】 两个作用： 
+///                 1.声明 mod ；
+///                 2. 将其他子 mod 内容 【导入】 到当前 mod 关键字的位置
+/// 
+///                 [声明 mod]
+///                             1. 每个 x.rs 文件就是一个 mod
+///                             2. 目录下有 mod.rs 则 目录名为一个 mod
+///                             3. mod xxx { ... } 则 xxx 为一个 mod 
+///                             4. 配合 include! 宏，将某个文件定义为 mod，如：
+///                 
+///                                     mod toy1 { // 方法1： 使用 include!     // mod toy1
+///                                         include!("./toy_implements.rs");
+///                                     }
+/// 
+///                             5. 配合 #[path ="./xxx.rs"] 注解，将某个文件定义为 mod，如：
+///                 
+///                                     #[path ="./toy_implements.rs"] 
+///                                      mod toy2; // 方法2： 使用 path 属性定位文件位置,   mod toy2
+/// 
+///                             6. 创建与文件夹同名的模块定义文件,也就是将mod.rs改名后提到外层，如：
+/// 
+///                                     // 目录结构:
+///                                     // ┌─main.rs
+///                                     // ├─services
+///                                     // │  └─user.rs
+///                                     // └─services.rs    在和目录同级处定义和目录同名的  rs 文件，即 mod 为目录名
+/// 
+///                                     // user.rs
+///                                     pub fn get(){
+///                                         println!("get user");
+///                                     }
+/// 
+///                                     // services.rs
+///                                     pub mod user;
+/// 
+///                                     // main.rs
+///                                     mod services;
+///                                     fn main() {
+///                                         services::user::get();
+///                                     }
+///                             
+///             
+///                  [导入 mod]
+///                             1. mod xxx；将 mod  xxx 的内容导入到当前 文件中， 位置在  mod xxx；语句处 
+/// 
+/// 
+/// 
+///             【pub mod】
+/// 
+///             pub  mod  xxx ;相当于把 xxx 复制到这个pub mod语句处 再冠以 pub，如：
+/// 
+///                     // src/toy/cube/mod.rs
+///                     pub fn get_size() {
+///                         println!("size is in main");
+///                         crate::top_size(); // 使用 crate 的 top_size 函数，必不可少的 crate 关键字
+///                     }
+///                     
+///                     // src/toy/mod.rs
+///                     pub mod cube; // 将子 mod cube 导入 mod toy 的这个位置，并暴露出去
+///                     
+///                     // src/main.rs
+///                     mod toy;   // 将子 mod toy 导入到这里
+///                     fn top_size() {
+///                         println!("top size one !")
+///                     }
+///                     fn main() {
+///                         toy::cube::get_size();  // 因为 mod cube 被导入到 mod toy 中，并暴露出来，故可以 toy::cube 这样用
+///                     }
+/// 
+/// 
+///             【use】
+///                 
+///                     调整模块内容调用路径，主要是为了规避 又长又臭的路径  xxx::xxx::xxx
+///                     
+///                         use 仅仅是在存在模块的前提下，调整调用路径，而没有引入模块的功能，引入模块使用 mod。
+///                         
+///                         所以 use 必须是在将子 mod 导进来后才可以用， use aa 和 mod aa 需要同时存在当前文件中，方可在当前文件使用 mod aa 的内容
+/// 
+///             
+///             【pub use】
+///                         
+///                       将子 mod 的内容整合到当前 mod 并对外暴露，让外面看来这些内容是属于当前mod的，如：
+/// 
+///                         // src/toy/runner.rs
+///                         pub fn dog_run() { println!("dog is run !"); }
+/// 
+///                         // src/toy/fly.rs
+///                         pub fn fly_bird() { println!("bird is fly !"); }
+///                         
+///                         // src/toy/bear.rs
+///                         pub fn bear_eat() { println!("bear is eat fish !"); }
+///                         pub fn bear_sleep() { println!("bear is go sleep !"); }
+///                         
+///                         // src/toy/mod.rs
+///                         mod runner; // 引入同级 runner.rs 文件
+///                         mod fly; // 引入同级 fly.rs 文件
+///                         mod bear; // 引入同级 bear.rs 文件
+/// 
+///                         pub use runner::dog_run; // 声明（导出） dog_run 函数
+///                         pub use fly::fly_bird as now_fly_brid; // 声明（导出） fly_bird 函数，并重命名为 now_fly_brid
+///                         pub use bear::*; // 声明（导出） dog_run 函数
+///                         
+///                         // src/main.rs
+///                         mod toy;    // 将 mod toy 的内容都导入到这个位置
+///                         fn main() {
+///                             toy::dog_run();
+///                             toy::now_fly_brid();
+///                             toy::bear_eat();
+///                             toy::bear_sleep();
+///                         }
+/// 
+/// 
+/// 
+///            【pub(crate) 或者 pub(self) 或者 pub(super) 或者 pub(in <path>)】
+/// 
+///             1. pub 意味着可见性无任何限制
+///             2. pub(crate) 表示在当前包可见
+///             3. pub(self) 在当前模块可见
+///             4. pub(super) 在父模块可见
+///             5. pub(in <path>) 表示在某个路径代表的模块中可见，其中 path 必须是父模块或者祖先模块
+/// 
+///             如：
+/// 
+///                             // 一个名为 `my_mod` 的模块
+///                             mod my_mod {
+/// 
+///                                 // 模块中的项默认具有私有的可见性
+///                                 fn private_function() {
+///                                     println!("called `my_mod::private_function()`");
+///                                 }
+///                             
+///                                 // 使用 `pub` 修饰语来改变默认可见性。
+///                                 pub fn function() {
+///                                     println!("called `my_mod::function()`");
+///                                 }
+///                             
+///                                 // 在同一模块中，项可以访问其它项，即使它是私有的。
+///                                 pub fn indirect_access() {
+///                                     print!("called `my_mod::indirect_access()`, that\n> ");
+///                                     private_function();
+///                                 }
+///                             
+///                                 // 模块也可以嵌套
+///                                 pub mod nested {
+/// 
+///                                     pub fn function() {
+///                                         println!("called `my_mod::nested::function()`");
+///                                     }
+///                             
+///                                     #[allow(dead_code)]
+///                                     fn private_function() {
+///                                         println!("called `my_mod::nested::private_function()`");
+///                                     }
+///                             
+///                                     // 使用 `pub(in path)` 语法定义的函数只在给定的路径中可见。
+///                                     // `path` 必须是父模块（parent module）或祖先模块（ancestor module）
+///                                     pub(in crate::my_mod) fn public_function_in_my_mod() {
+///                                         print!("called `my_mod::nested::public_function_in_my_mod()`, that\n > ");
+///                                         public_function_in_nested()
+///                                     }
+///                             
+///                                     // 使用 `pub(self)` 语法定义的函数则只在当前模块中可见。
+///                                     pub(self) fn public_function_in_nested() {
+///                                         println!("called `my_mod::nested::public_function_in_nested");
+///                                     }
+///                             
+///                                     // 使用 `pub(super)` 语法定义的函数只在父模块中可见。
+///                                     pub(super) fn public_function_in_super_mod() {
+///                                         println!("called my_mod::nested::public_function_in_super_mod");
+///                                     }
+///                                 }
+///                             
+///                                 pub fn call_public_function_in_my_mod() {
+///                                     print!("called `my_mod::call_public_funcion_in_my_mod()`, that\n> ");
+///                                     nested::public_function_in_my_mod();
+///                                     print!("> ");
+///                                     nested::public_function_in_super_mod();
+///                                 }
+///                             
+///                                 // `pub(crate)` 使得函数只在当前包中可见
+///                                 pub(crate) fn public_function_in_crate() {
+///                                     println!("called `my_mod::public_function_in_crate()");
+///                                 }
+///                             
+///                                 // 嵌套模块的可见性遵循相同的规则
+///                                 mod private_nested {
+///                                     #[allow(dead_code)]
+///                                     pub fn function() {
+///                                         println!("called `my_mod::private_nested::function()`");
+///                                     }
+///                                 }
+///                             }
+///                             
+///                             fn function() {
+///                                 println!("called `function()`");
+///                             }
+///                             
+///                             fn main() {
+///                                 // 模块机制消除了相同名字的项之间的歧义。
+///                                 function();
+///                                 my_mod::function();
+///                             
+///                                 // 公有项，包括嵌套模块内的，都可以在父模块外部访问。
+///                                 my_mod::indirect_access();
+///                                 my_mod::nested::function();
+///                                 my_mod::call_public_function_in_my_mod();
+///                             
+///                                 // pub(crate) 项可以在同一个 crate 中的任何地方访问
+///                                 my_mod::public_function_in_crate();
+///                             
+///                                 // pub(in path) 项只能在指定的模块中访问
+///                                 // 报错！函数 `public_function_in_my_mod` 是私有的
+///                                 //my_mod::nested::public_function_in_my_mod();
+///                                 // 试一试 ^ 取消该行的注释
+///                             
+///                                 // 模块的私有项不能直接访问，即便它是嵌套在公有模块内部的
+///                             
+///                                 // 报错！`private_function` 是私有的
+///                                 //my_mod::private_function();
+///                                 // 试一试 ^ 取消此行注释
+///                             
+///                                 // 报错！`private_function` 是私有的
+///                                 //my_mod::nested::private_function();
+///                                 // 试一试 ^ 取消此行的注释
+///                             
+///                                 // 报错！ `private_nested` 是私有的
+///                                 //my_mod::private_nested::function();
+///                                 // 试一试 ^ 取消此行的注释
+///                             }
+/// 
+/// 
+/// 
+/// 
+/// 
+/// 
+/// 
+/// 

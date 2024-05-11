@@ -19,9 +19,9 @@
 /// 
 /// 
 /// 
-///     let s1 = String::from("hello");
+///     let s1 = String::from("hello");           ---------------> s1 为 String 类型  不可变 String
 /// 
-///     let len = calculate_length(&s1);          -----------------       &s1 语法，我们创建了一个指向 s1 的引用，但是并不拥有它
+///     let len = calculate_length(&s1);          -----------------       &s1 语法，我们创建了一个指向 s1 的引用，但是并不拥有它 (&s1 为 &String)
 /// 
 ///     println!("The length of '{}' is {}.", s1, len);
 /// 
