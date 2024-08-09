@@ -232,7 +232,7 @@
 /// 
 /// let s = String::from("hello,world!");
 /// 
-/// let x = &s; ------------> 这个不是  &String 么???
+/// let x = &s; ------------> 这个不是  &String 么???   在 slice.rs 中有个别例子  fn first_word(s: &str) -> &str  可以用 &String 传进去，说明 &String 可以隐式转换成 &str
 /// 
 /// 或者
 /// 

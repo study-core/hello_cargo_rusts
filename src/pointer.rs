@@ -168,9 +168,9 @@
 ///    use std::rc::Rc;
 ///    
 ///    fn main() {
-///        let a = Rc::new(Cons(5,  Rc::new(Cons(10,  Rc::new(Nil)))));      // 开启 引用计数指针  (可以被 其他 一直使用)
+///        let a = Rc::new(Cons(5,  Rc::new(Cons(10,  Rc::new(Nil)))));     // 开启 引用计数指针  (可以被 其他 一直使用)
 ///        let b = Cons(3,  Rc::clone(&a));                                 // Rc::clone 的实现并不像大部分类型的 clone 实现那样对所有数据进行深拷贝 (只会增加引用计数)
-///        let c = Cons(4,  Rc::clone(&a));                                 // (也可以调用 a.clone() 而不是 Rc::clone(&a), 不过在这里 Rust 的习惯是使用 Rc::clone)
+///        let c = Cons(4,  a.clone());                                     // (也可以调用 a.clone() 而不是 Rc::clone(&a), 不过在这里 Rust 的习惯是使用 Rc::clone)
 ///    
 ///        // (Rc<List> 的初始引用计数为 1, 接着每次调用 clone, 计数会增加 1.当 c 离开作用域时, 计数减 1)
 ///    }
@@ -188,6 +188,7 @@
 /// 
 /// 
 ///                 对于 【引用】 和 【Box<T>】, 借用规则的不可变性作用于 【编译时】.
+/// 
 ///                 对于 【RefCell<T>】, 这些不可变性作用于 【运行时】.
 /// 
 /// 
@@ -196,7 +197,9 @@
 /// 
 /// 
 /// 
-/// 对于 RefCell<T> 来说, 则是 borrow 和 borrow_mut 方法, 这属于 RefCell<T> 安全 API 的一部分.borrow 方法返回 Ref<T> 类型的智能指针, borrow_mut 方法返回 RefMut<T> 类型的智能指针.
+/// 对于 RefCell<T> 来说, 则是 borrow 和 borrow_mut 方法, 这属于 RefCell<T> 安全 API 的一部分.
+///                         borrow 方法返回         Ref<T> 类型的智能指针,
+///                         borrow_mut 方法返回     RefMut<T> 类型的智能指针.
 /// 
 /// 
 /// 
@@ -244,6 +247,7 @@
 ///  use std::rc::Rc;
 ///  
 ///  fn main() {
+///      
 ///      let value = Rc::new(RefCell::new(5));                          // 这是一个 【不可变借用】 的引用计数指针 Rc
 ///  
 ///      let a = Rc::new(Cons(Rc::clone(&value),  Rc::new(Nil)));        
@@ -254,9 +258,9 @@
 ///      *value.borrow_mut() += 10;                                     // 直接用了 RefCell 的 borrow_mut()  {该方法返回 RefMut<T> 智能指针 } 去通过 【内不可变性】 改变 Rc 的值
 ///                                                                     // (注意: 直接改变 (用 引用 、解引用 那套) rc 的值,  编译报错的,  只能用 RefCell (内不可变性) 去改变 【不可变引用】 的值)    
 ///  
-///      println!("a after = {:?}",  a);
-///      println!("b after = {:?}",  b);
-///      println!("c after = {:?}",  c);
+///      println!("a after = {:?}",  a);        // a after = Cons(RefCell { value: 15 }, Nil)        
+///      println!("b after = {:?}",  b);        // b after = Cons(RefCell { value: 3 }, Cons(RefCell { value: 15 }, Nil))
+///      println!("c after = {:?}",  c);        // c after = Cons(RefCell { value: 4 }, Cons(RefCell { value: 15 }, Nil))
 ///  }
 /// 
 /// 

@@ -17,7 +17,7 @@
 /// 
 ///     // 只用  let  
 /// 
-///     let user1 = User {
+///     let user1 = User {                                              // 注意，此处这样写会报错，原因是 User 未定义
 ///         active: true, 
 ///         username: String::from("someusername123"), 
 ///         email: String::from("someone@example.com"), 
@@ -37,7 +37,7 @@
 /// 
 ///     // 用了  let  mut
 ///     
-///     let mut user1 = User {
+///     let mut user1 = User {                                          // 注意，此处这样写会报错，原因是 User 未定义
 ///         active: true, 
 ///         username: String::from("someusername123"), 
 ///         email: String::from("someone@example.com"), 
@@ -62,25 +62,25 @@
 /// fn main() {
 ///     // --snip--
 /// 
-///     let user2 = User {   //  user1 的所有权已经被转移到 user2 了哦
+///     let user2 = User {                                      // 注意，此处这样写会报错，原因是 User 未定义
 ///         email: String::from("another@example.com"), 
-///         ..user1
+///         ..user1                                             //  user1 的所有权已经被转移到 user2 了哦
 ///     };
 /// 
-///  println!("user: {#:?}",  user1); // 报错: user1 的所有权已经转移到 user2 了
+///  println!("user: {#:?}",  user1);                           // 报错: user1 的所有权已经转移到 user2 了  (user2 使用了 user1 的非基础类型的字段，导致 user1 的所有权被转移，看下一例子就明白)
 /// }
 /// 
 /// ----------------------------------------------------
 /// fn main() {
 ///     // --snip--
 /// 
-///     let user2 = User {   //  user1 还是可以用哦
+///     let user2 = User {                                      // 注意，此处这样写会报错，原因是 User 未定义
 ///         email: String::from("another@example.com"), 
 ///          username: String::from("user2"), 
-///         ..user1
+///         ..user1                                             //  user1 还是可以用哦
 ///     };
 /// 
-///  println!("user: {#:?}",  user1); // 可以用 user1,  因为 复制给 user2 的只有 active [bool] 和 sign_in_count [u32] , 因为基础类型实现了 Copy  trait, 产生 移动所有权
+///  println!("user: {#:?}",  user1);                           // 可以用 user1,  因为 复制给 user2 的只有 active [bool] 和 sign_in_count [u32] (因为基础类型实现了 Copy  trait, 产生 移动所有权)
 ///  
 /// }
 /// 
@@ -109,13 +109,15 @@
 /// 
 /// 
 /// ######################################################################################################################################################
-///  类单元结构体
+///  类 unit  结构体     <类似 unit 的结构体>
 /// ###################################################################################################################################################### 
 /// 
 /// 它类似于 (), 即 uint 元组
 /// 
 /// 
-/// 【用途】: 常常在你想要在某个类型上实现 trait 但不需要在类型中存储数据的时候发挥作用
+/// 【用途】: 
+/// 
+///         在你想要在某个类型上实现 trait 但不需要在类型中存储数据的时候发挥作用
 ///
 /// 
 /// struct AlwaysEqual;
@@ -143,8 +145,8 @@
 /// ------------------------------------
 /// struct User {
 ///     active: bool, 
-///     username: &str,    --------------- missing lifetime specifier
-///     email: &str,       --------------- missing lifetime specifier
+///     username: &str,    // --------------- missing lifetime specifier       引用，需要加上 life type
+///     email: &str,       // --------------- missing lifetime specifier       引用，需要加上 life type
 ///     sign_in_count: u64,   
 /// }
 /// 
@@ -245,21 +247,22 @@
 /// //
 /// impl Rectangle {
 /// 
-///     // 方法的第一个参数必须有一个名为 self 《变量名》 的 [Self 类型] 的参数, 所以 Rust 让你在第一个参数位置上只用 self 这个名字来缩写
+///     // 方法的第一个参数必须有一个名为 self 《变量名》 的 【Self 类型】 的参数, 所以 Rust 让你在第一个参数位置上只用 self 这个名字来缩写
 ///     //
 ///     // 注意, 我们仍然需要在 self 前面使用 & 来表示这个方法借用了 Self 实例. 像我们在 rectangle: &Rectangle 中做的那样.
 ///     //
-///     // 1、 方法可以选择获得 self 的所有权     【self】      ----------      (发生在: 用在当方法将 self 转换成别的实例的时候, 这时我们想要 防止 调用者 在转换之后 使用 原始的实例)
-///     // 2、 或者像我们这里一样不可变地借用 self  【&self】      ----------      (发生在: 我们并不想获取所有权, 只希望能够读取结构体中的数据, 而不是写入)
-///     // 3、 或者可变地借用 self, 就跟其他参数一样  【&mut self】  ----------      (发生在: 想要在方法中改变调用方法的实例)
+///     // 1、 方法可以选择获得 self 的所有权     【self】              ----------      (发生在: 用在当方法将 self 转换成别的实例的时候, 这时我们想要 防止 调用者 在转换之后 使用 原始的实例)
+///     // 2、 或者像我们这里一样不可变地借用 self  【&self】           ----------      (发生在: 我们并不想获取所有权, 只希望能够读取结构体中的数据, 而不是写入)
+///     // 3、 或者可变地借用 self, 就跟其他参数一样  【&mut self】     ----------      (发生在: 想要在方法中改变调用方法的实例)
 ///     //
 ///     // 
 ///     //
-///     // &self 其实是 self: &Self 的缩写
+///     //          【&self 其实是 self: &Self 的缩写】
+///     //
 ///     //
 ///     // 在一个 impl 块中, Self 类型是 impl 块的类型的别名,  这里就是  Rectangle 的别名
 ///     //
-///     //  这里选择 &self 的理由跟在函数版本中使用 &Rectangle 是相同的:我们并不想获取所有权, 只希望能够读取结构体中的数据, 而不是写入.
+///     //  这里选择 &self 的理由跟在函数版本中使用 &Rectangle 是相同的:      我们并不想获取所有权, 只希望能够读取结构体中的数据, 而不是写入.
 ///     //
 ///     fn area(&self) -> u32 {
 ///         self.width * self.height
