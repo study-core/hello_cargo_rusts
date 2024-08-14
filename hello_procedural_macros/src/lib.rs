@@ -2,8 +2,6 @@
 // 定义 【类函数】 过程宏
 #![crate_type = "proc-macro"]
 extern crate proc_macro;
-use std::fmt::Pointer;
-
 use proc_macro::TokenStream;
 
 #[proc_macro]
