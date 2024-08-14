@@ -231,8 +231,13 @@
 /// ---------------------
 /// 
 /// let s = String::from("hello,world!");
+///
 /// 
-/// let x = &s; ------------> 这个不是  &String 么???   在 slice.rs 中有个别例子  fn first_word(s: &str) -> &str  可以用 &String 传进去，说明 &String 可以隐式转换成 &str
+/// // 这个不是  &String 么???   
+/// //
+/// // 在 slice.rs 中有个别例子  fn first_word(s: &str) -> &str  可以用 &String 传进去，说明 &String 可以隐式转换成 &str  
+/// // (不知道是不是这个原因: 在 String 的 Deref 强制转换可以将 &String 转换为 &str) 
+/// let x = &s;
 /// 
 /// 或者
 /// 
