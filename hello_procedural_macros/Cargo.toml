@@ -1,0 +1,13 @@
+[package]
+name = "hello_procedural_macros"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+syn = "2.0.50"      # 例子中的 派生过程宏 定义需要
+quote = "1.0"       # 例子中的 派生过程宏 定义需要
+# proc-macro2 = "1.0"
+
+# 如果项目中需要定义 【过程宏】 则需要在 根目录的 Cargo.toml 中写上这个
+[lib]
+proc-macro = true

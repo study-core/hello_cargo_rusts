@@ -6,3 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+
+# 引入 hello_procedural_macros lib 
+hello_procedural_macros = { path = "../hello_cargo_rusts/hello_procedural_macros" }
+# 也可以使用下面的相对路径
+# hello_procedural_macros = { path = "./hello_procedural_macros" }
