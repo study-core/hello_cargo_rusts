@@ -68,3 +68,203 @@
 ///     call_from_c();
 ///     return 0;
 /// }
+/// 
+/// 
+/// 
+/// 
+/// 
+/// 
+/// 
+/// 
+
+/// ######################################################################################################################################################
+/// ######################################################################################################################################################
+/// ######################################################################################################################################################
+/// 
+/// 
+///                                                                    更详细的写法
+/// 
+/// 
+/// ######################################################################################################################################################
+/// ######################################################################################################################################################
+/// ######################################################################################################################################################
+/// 
+/// 【 C 中调用 Rust 】
+/// 
+/// 
+/// rust 侧：
+/// 
+///         // src/lib.rs
+///         #[no_mangle]
+///         pub extern fn double_input(input: i32) -> i32 {
+///             input * 2
+///         }
+/// 
+/// 
+/// c 侧：
+/// 
+/// 
+///         // src/main.c
+///         #include <stdint.h>
+///         #include <stdio.h>
+///         
+///         extern int32_t double_input(int32_t input);
+///         
+///         int main() {
+///             int input = 4;
+///             int output = double_input(input);
+///             printf("%d * 2 = %d\n", input, output);
+///             return 0;
+///         }
+/// 
+/// 
+/// 
+/// 
+/// 
+/// 
+/// 
+/// 
+/// 
+/// 【 Rust 中调用 C 】
+/// 
+/// 
+/// c 侧：
+/// 
+///         // src/double.c
+///         int double_input(int input) {
+///             return input * 2;
+///         }
+///
+/// 
+/// 
+/// 
+/// rust 侧：
+/// 
+/// 
+///         // build.rs
+///         extern crate cc;
+///         
+///         fn main() {
+///             cc::Build::new()
+///                 .file("src/double.c")
+///                 .compile("libdouble.a");
+///         }
+/// 
+/// 
+///         // src/main.rs
+///         extern crate libc;
+///         
+///         extern {
+///             fn double_input(input: libc::c_int) -> libc::c_int;
+///         }
+///         
+///         fn main() {
+///             let input = 4;
+///             let output = unsafe { double_input(input) };
+///             println!("{} * 2 = {}", input, output);
+///         }
+/// 
+/// 
+/// 
+/// 
+/// 【 C++ 中调用 Rust 】
+/// 
+/// 
+/// rust 侧：
+/// 
+/// 
+///         // src/lib.rs
+///         #[no_mangle]
+///         pub extern fn double_input(input: i32) -> i32 {
+///             input * 2
+///         }
+///
+/// 
+/// 
+/// 
+/// 
+/// 
+/// c++ 侧：
+/// 
+///         // src/example.h
+///         #ifndef _EXAMPLE_H
+///         #define _EXAMPLE_H
+///         
+///         #ifdef __cplusplus
+///         extern "C"{
+///         #endif
+///         
+///         int double_input(int input);
+///         
+///         #ifdef __cplusplus
+///         }
+///         #endif
+///         #endif
+/// 
+/// 
+/// 
+/// 
+/// 
+/// 
+///         // src/main.cpp
+///         #include <iostream>
+///         #include "example.h"
+///         
+///         using namespace std;
+///         
+///         int main() {
+///           int input = 10;
+///           int output = double_input(input);
+///           cout<<input<<" * 2 = "<<output<<"\n";
+///         
+///           return 0;
+///         }
+/// 
+/// 
+/// 
+/// 
+/// 【 Rust 中调用 C++ 】
+/// 
+/// 
+/// c++ 侧：
+/// 
+/// 
+///         // src/triple.cpp
+///         extern "C"
+///         int triple_input(int input) {
+///             return input * 3;
+///         }
+/// 
+/// 
+/// 
+/// rust 侧：
+/// 
+/// 
+///         // build.rs
+///         extern crate cc;
+///         
+///         fn main() {
+///             cc::Build::new()
+///                 .file("src/triple.cpp")
+///                 .cpp(true)
+///                 .compile("libtriple.a");
+///         }
+///         
+/// 
+/// 
+///         // src/maim.rs
+///         extern crate libc;
+///         
+///         extern {
+///             fn triple_input(input: libc::c_int) -> libc::c_int;
+///         }
+///         
+///         fn main() {
+///             let input = 4;
+///             let output = unsafe { triple_input(input) };
+///             println!("{} * 3 = {}", input, output);
+///         }
+/// 
+/// 
+
+
