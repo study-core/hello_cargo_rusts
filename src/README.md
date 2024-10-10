@@ -4,16 +4,16 @@
 
 Cargo.toml 和 Cargo.lock 是 Cargo 的两个元配置文件, 但是它们拥有不同的目的:
 
-前者从用户的角度出发来描述项目信息和依赖管理, 因此它是由用户来编写
-后者包含了依赖的精确描述信息, 它是由 Cargo 自行维护, 因此不要去手动修改
-它们的关系跟 package.json 和 package-lock.json 非常相似, 从 JavaScript 过来的同学应该会比较好理解.
+前者 (Cargo.toml) 从用户的角度出发来描述项目信息和依赖管理, 因此它是由用户来编写
+后者 (Cargo.lock) 包含了依赖的精确描述信息, 它是由 Cargo 自行维护, 因此不要去手动修改
+它们的关系跟 package.json 和 package-lock.json 非常相似.
 
 
 ## 工作空间
 
-Cargo 提供了一个叫 工作空间(workspaces)的功能, 它可以帮助我们管理多个相关的协同开发的包.
+Cargo 提供了一个叫 `工作空间` (workspaces) 的功能, 它可以帮助我们管理多个相关的协同开发的包.
 
-工作空间 是一系列共享同样的 Cargo.lock 和输出目录的包.
+`工作空间` 是一系列共享同样的 Cargo.lock 和输出目录的包.
 
 ## 创建工作空间
 
