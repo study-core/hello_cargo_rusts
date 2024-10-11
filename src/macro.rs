@@ -150,6 +150,21 @@
 ///         $( $i:expr ),* $(,)?
 /// 
 /// 
+/// 
+/// 
+/// 
+/// 
+///                                                         $( $i:ident ),*            表示以逗号分隔的任意数量的标识符
+/// 
+/// 
+/// 
+/// 
+/// 
+/// 
+/// 
+/// 
+/// 
+/// 
 /// 如下:
 /// 
 /// 
@@ -264,13 +279,13 @@
 /// 
 /// 
 ///             1. $$：                         展开为单个 $，这会有效地转义 $ 标记，因此它不会被展开 (转码)
-///             2. ${count($ident)}：           【最里】层 $ident 总共重复的次数，相当于 ${count(ident, 0)}
-///             3. ${count($ident，depth)}：    第 depth 层 $ident 总共重复的次数
-///             4. ${index()}：                 【最里】层重复的当前重复的索引，相当于 ${index(0)}
-///             5. ${index(depth)}：            在第 depth 层处当前重复的索引，向外计数
-///             6. ${len()}：                   【最里】层重复的【重复次数】，相当于 ${length(0)}
-///             7. ${len(depth)}：              在第 depth 层重复的次数，向外计数
-///             8. ${ignore(ident)}：           绑定 $ident 进行重复，并展开成空
+///             2. ${count($ident)}：           【最里】层 $ident 总共重复出现的次数，相当于 ${count(ident, 0)}
+///             3. ${count($ident，depth)}：    第 depth 层 $ident 总共重复出现的次数
+///             4. ${index()}：                 【最里】层重复的当前重复出现的索引，相当于 ${index(0)}
+///             5. ${index(depth)}：            在第 depth 层处当前重复出现的索引，向外计数
+///             6. ${len()}：                   【最里】层重复的【重复出现次数】，相当于 ${length(0)}
+///             7. ${len(depth)}：              在第 depth 层重复出现的次数，向外计数
+///             8. ${ignore(ident)}：           绑定 $ident 进行重复出现，并展开成空
 ///         
 /// 
 /// 
@@ -320,7 +335,7 @@
 /// 
 ///         
 /// 
-///         count 表达式展开成元变量 $ident 在给定重复深度的重复次数。
+///         count 表达式展开成元变量 $ident 在给定重复深度的重复出现的次数。
 /// 
 ///         
 ///         
@@ -332,20 +347,34 @@
 /// 
 ///         例如:  
 ///         
-///                 ${count(x)} $( $x )*  
+///                 使用    ${count(x)}         算          $( $x )*   的 x 在【最里】层重复出现的次数
+/// 
+/// 
+/// 
+/// 
 ///         
-///         表达式 ${count(x)} 将扩展为无后缀的整数文字，等于 $( $x )* 重复的重复次数。例如，如果元变量 $x 重复四次，那么它将扩展到整数文字 4
+///         表达式 ${count(x)} 将扩展为无后缀的整数文字，等于 $( $x )* 重复的重复次数。
+/// 
+///         例如，如果元变量 $x 重复四次，那么它将扩展到整数文字 4
+/// 
+///         
+/// 
+/// 
 /// 
 ///         如果重复是嵌套的，则可以使用可选的深度参数来限制计算的嵌套重复的数量。例如，宏扩展如下：
 /// 
-///                 ${count(x, 1)} ${count(x, 2)} ${count(x, 3)} $( a $( b $( $x )* )* )*
 /// 
-///         扩展为的三个值是最外层重复次数（ a 生成的次数）、中间重复次数的总和（ b 生成的次数）以及 $x 的重复总数
+///         (从里到外， 从 0  到 n，其中 n 不能大于真实的 【重复模式】的层数)
 /// 
+///              
 ///     
 /// 
 ///             #![feature(macro_metavar_expr)]
-///             
+///             //
+///             // count(outer, 0): $outer repeats 4 times                                                  从 outer 最开始出现处为 outer 的第 0 层 <本例中 outer 层数不可大于 1>, outer 在第 0 层出现次数为 4
+///             // count(inner, 0): The $inner repetition repeats 3 times in the outer repetition           从 inner 最开始出现处为 inner 的第 0 层 <本例中 outer 层数不可大于 2>, inner 在第 0 层出现次数为 3
+///             // count(inner, 1): $inner repeats 4 times in the inner repetitions                         这个基于特别注意啦, inner 的第 1 层其实是 outer 的第 0 层所处的空间, 受限于 outer 出现次数, 故和 outer 次数一致为 4    【自己动手再加一层并多搞些数据模拟下就知道了】      
+///             //
 ///             macro_rules! foo {
 ///                 ( $( $outer:ident ( $( $inner:ident ),* ) ; )* ) => {
 ///                     println!("count(outer, 0): $outer repeats {} times", ${count($outer)});                                             // 4
@@ -365,9 +394,13 @@
 /// 
 /// 
 /// 
+/// 
 ///     3. 【${index()}】和【${index(depth)}】
 /// 
-///         index(depth) 表达式展开为给定重复深度下，当前的迭代索引。
+/// 
+///         (表示当前 index 所处的位置，正好是 【迭代】的第几个位置，一般将 index 和 迭代元素 放一起使用，如： $inner ${index()} , 这样表示求： 当前 inner 元素所处的位置)
+/// 
+///         index(depth) 表达式展开为给定重复深度下，当前的迭代(重复出现的元素)索引。
 ///             
 ///             depth 参数表明在第几层重复，这个数字  从最内层重复 调用表达式开始 向外 计算
 ///             index(depth) 展开成不带后缀的整型字面值标记
@@ -424,6 +457,10 @@
 /// 
 /// 
 ///     4. 【${len()}】 和 【${len(depth)}】
+/// 
+/// 
+///     (类似 index 的使用，只不过求得是当前 元素 所处的 迭代序列 <数组、list> 的总长度)
+/// 
 /// 
 ///         length(depth) 表达式展开为在给定重复深度的迭代次数。
 ///             
@@ -483,6 +520,11 @@
 /// 
 /// 
 ///     5. 【${ignore(ident)}】
+/// 
+/// 
+/// 
+/// 
+/// 
 /// 
 ///         ignore(ident) 表达式展开为空，这使得在无需实际展开元变量的时候，像元变量重复展开相同次数的某些内容
 ///             
@@ -557,12 +599,14 @@
 /// 
 /// 
 /// 
-/// #[macro_use]
+/// #[macro_use]         // 未来考虑 【被弃用】 啦，进而使用  use 关键字来直接使用 宏
 /// 
 ///             
 ///         1、导出该模块内的所有宏， 从而让导出的宏在所定义的模块结束之后依然可用
 /// 
-///
+///             (父模块中定义的宏对其下的子模块是可见的，要想子模块中定义的宏在其后面的父模块中可用，需要使用 #[macro_use])
+/// 
+/// 
 ///             #![allow(unused)]
 ///             
 ///             #[macro_use]   // 加了这行，使之宏 m 在 mod inner 之外还有意义
@@ -573,19 +617,48 @@
 ///             }
 ///             
 ///             fn main() {
-///                 m!();
+///                 m!();   // 父 mod main 中 使用 子 mod inner 中定义的 宏 m
 ///             }
+/// 
+/// 
+///             又如：在同一 crate 的另一个 新文件 macros.rs ,定义一个宏 say_bonjour 
+/// 
+///
+///             // ./macros.rs
+///             macro_rules! say_bonjour{
+///                 ()=>(
+///                     println!("Bonjour");
+///                 )
+///             }
+/// 
+///     
+/// 
+/// 
+///             // 在 main.rs 中使用
+///             #[macro_use]             
+///             pub mod macros;
+///             
+///             macro_rules! say_hello{
+///                ()=>(
+///                    println!("Hello");
+///                )
+///             }
+///             
+///             fn main(){
+///                 say_hello!();
+///                 say_bonjour!();
+///             }       
 ///         
 /// 
-///         2、用于从另一个 crate 里来导入宏，方法是将它附加到当前 crate 根模块中的 extern crate 声明前
+///         2、用于从 【另一个 crate】 里来导入宏，方法是将它附加到当前 crate 根模块中的 extern crate 声明前
 /// 
-///             (要用 #[macro_use] 导入宏，必须先使用 #[macro_export] 将被使用的宏导出)
+///             (要用 #[macro_use] 导入宏，必须在【另一个 crate】先使用 #[macro_export] 将被使用的宏导出)
 /// 
-///             #[macro_use(lazy_static)] // 或者使用 #[macro_use] 来导入所有宏.
-///             extern crate lazy_static;
+///             #[macro_use(lazy_static)]       // 使用 #[macro_use] 来导入所有宏. 其中 lazy_static 是 【另一个 crate】 名
+///             extern crate lazy_static;       
 ///             
 ///             lazy_static!{}
-///             // self::lazy_static!{} // 报错: lazy_static 没在 `self` 中定义
+///             // self::lazy_static!{} // 报错: lazy_static 没在 `self` 中定义, 因为它是在外部模块中定义的
 /// 
 /// 
 /// 
@@ -620,7 +693,7 @@
 ///             
 ///             
 ///             fn main() {
-///                 self::m!(); // 由于 mod mac 将宏 m 导出到当前 crate 的顶部，可以这样用 
+///                 self::m!(); // 由于 mod mac 将宏 m 导出到当前 crate 的顶部，所以 (相当于在 当前 crate 中定义的一样) 可以这样用 
 ///                 m!();       // OK: 基于路径的查找发现 m 在当前模块中有声明.
 ///             }
 /// 
@@ -650,7 +723,7 @@
 ///                 () => { () }
 ///             }
 ///             
-///             // 在另一个 crate 中使用.
+///             // 在另一个 crate 中使用.   【使用 use  导入宏 helped】
 ///             // 注意没有导入 `helper_macro::helper`!
 ///             use helper_macro::helped;
 ///             
@@ -660,7 +733,7 @@
 ///             
 /// 
 /// 
-///     【由于 $crate 指的是当前的（$crate 源码出现的）crate，因此在引用非宏程序项时，它必须与全限定模块路径一起使用】
+///     【由于 $crate 指的是当前的  ($crate 源码出现的)  crate，因此在引用非宏程序项时，它必须与全限定模块路径一起使用】
 ///                 
 ///         
 /// 
@@ -719,7 +792,7 @@
 /// 
 /// 
 /// 
-///     【当一个宏被导出时，可以在 #[macro_export] 属性里添加 local_inner_macros 属性值，用以自动为该属性修饰的宏内包含的所有宏调用自动添加 $crate:: 前缀】
+///     【当一个宏被导出时，可以在 #[macro_export] 属性里添加      local_inner_macros      属性值，用以自动为该属性修饰的宏内包含的所有  宏调用  自动添加 $crate:: 前缀】
 /// 
 /// 
 /// 
@@ -729,7 +802,7 @@
 ///             
 ///             #[macro_export(local_inner_macros)]
 ///             macro_rules! helped {
-///                 () => { helper!() } // 自动转码为 $crate::helper!().
+///                 () => { helper!() }                             // 自动转码为 $crate::helper!().
 ///             }
 ///             
 ///             #[macro_export]
@@ -863,9 +936,9 @@
 ///             
 ///             fn main () {
 ///                 each_tt!(foo bar baz quux);
-///                 trace_macros!(true);
+///                 trace_macros!(true);                // 打开调试
 ///                 each_tt!(spim wak plee whum);
-///                 trace_macros!(false);
+///                 trace_macros!(false);               // 关闭调试
 ///                 each_tt!(trom qlip winp xod);
 ///             
 ///             }
@@ -983,7 +1056,7 @@
 /// 
 /// 过程宏的核心：
 ///         
-///         只是一个从 proc-macro crate type 这种类型的库中所导出的公有函数，因此当编写多个过程宏时，你可以将它们全部放在一个 crate 中。
+///         只是一个从 proc-macro crate type 这种类型的库 lib 中所导出的公有函数，因此当编写多个过程宏时，你可以将它们全部放在一个 crate 中。
 /// 
 /// 
 /// 在使用 Cargo 时，定义一个 proc-macro crate 的方式是将 Cargo.toml 中的 lib.proc-macro 键设置为 true，就像这样  (例如： hello_procedural_macros 的 Cargo.toml 中添加)
@@ -996,20 +1069,31 @@
 /// 
 /// proc-macro 类型的 crate 会隐式链接到编译器提供的 proc_macro 库， proc_macro 库包含了开发过程宏所需的所有内容，并且它公开了两个最重要的类型：
 ///             
-///             1. TokenStream:     它表示我们所熟知的标记树
-///             2. Span:            它表示源代码的一部分，主要用于错误信息的报告和卫生性
+///             1. TokenStream:     它表示  我们所熟知的标记树
+///             2. Span:            它表示  源代码的一部分，主要用于  错误信息的报告  和  卫生性
 /// 
 /// 
 ///  
 /// 
-/// (过程宏其实是在 *token流(token streams)*上操作，而不是在某个或某些 AST 节点上操作。token流大致相当于 Vec<TokenTree>，其中 TokenTree 可以大致视为词法 token。
-/// 例如，foo 是标识符(Ident)类型的 token，. 是一个标点符号(Punct)类型的 token，1.2 是一个字面量(Literal)类型的 token。不同于 Vec<TokenTree> 的是 TokenStream 的克隆成本很低。
+/// (过程宏其实是在 *token流(token streams)*上操作，而不是在某个或某些 AST 节点上操作。token流  大致相当于 Vec<TokenTree>，其中 TokenTree 可以大致视为词法 token
+/// 
+/// 例如：
+///             foo     是标识符(Ident)类型的 token     
+///             .       是一个标点符号(Punct)类型的 token
+///             1.2     是一个字面量(Literal)类型的 token
+/// 
+/// 
+/// 不同于 Vec<TokenTree> 的是 TokenStream 的克隆成本很低。
 /// 所有类型的 token 都有一个与之关联的 Span。
 /// Span 是一个不透明的值，不能被修改，但可以被制造。Span 表示程序内的源代码范围，主要用于错误报告。可以事先（通过函数 set_span）配置任何 token 的 Span。)
 /// 
 /// 
 /// 
-/// 过程宏是存在于 crate 中的函数，所以它们可以像 Rust 项目中的所有其他条目一样使用
+/// 
+/// 
+/// 
+/// 
+///                     【过程宏    是存在于 crate 中的函数，所以它们可以像 Rust 项目中的所有其他条目一样使用】
 /// 
 /// 
 /// 
@@ -1038,7 +1122,7 @@
 /// 【1.【类函数】 过程宏】
 /// 
 /// 
-/// 类函数过程宏 是由一个带有 proc_macro属性和 (TokenStream) -> TokenStream签名的 公有可见性函数定义
+/// 类函数过程宏 是由一个带有 proc_macro 属性和 (TokenStream) -> TokenStream 签名的 公有可见性  函数定义
 /// 
 /// 类函数过程宏 像声明宏那样被调用，即 makro!(…) 这样调用；它也是唯一一个在单独看调用形式时，无法与声明宏区分开的宏
 /// 
@@ -1083,6 +1167,12 @@
 /// 
 /// 
 /// 
+///             
+/// 
+///                                     ---------------------  题外小知识： 使用 extern crate <library-name> 链接(导入) 外部库，就像其他导入项一样 (但 从 Rust 2018 开始，您只需要向 Cargo.toml 添加外部依赖项，因此不再需要使用 extern crate)
+///             
+/// 
+/// 
 /// 
 /// 
 /// 
@@ -1118,14 +1208,16 @@
 /// 
 /// 类属性过程宏 定义可以附加到程序项上的新的外部属性，这些程序项包括外部(extern)块、固有实现、trate实现，以及 trait声明中的各类程序项
 /// 
-/// 类属性过程宏 定义了可添加到条目的的新外部属性。这种宏通过 #[attr] 或 #[attr(…)] 方式调用
+/// 类属性过程宏 定义了可添加到条目的的新外部属性。这种宏通过 #[macro_name] 或 #[macro_name(…)] 方式调用
 /// 
 /// 
 /// 类属性过程宏 有两个输入参数：
 ///             
-///             第一个参数是 属性名称后面的带分隔符的标记树，不包括它周围的分隔符。   如果只有属性名称（其后不带标记树，比如 #[attr]），则这个参数的值为空
+///             第一个参数是   【#[macro_name(attr)] 中的 attr】                      属性名称后面的带分隔符的标记树，不包括它周围的分隔符。   
+///                                                                             如果只有宏名称（其后不带标记树，比如 #[macro_name]），则这个参数的值为空
 /// 
-///             第二个参数是 添加了该过程宏属性的条目，但不包括该过程宏所定义的属性。 因为这是一个 active 属性，在传递给过程宏之前，该属性将从条目中剥离出来
+///             第二个参数是    【被宏所修饰的条目信息，trait 、 fn 等】        被该过程宏所修饰的条目，但不包括该过程宏所定义的属性。 
+///                                                                             因为这是一个 active 属性，在传递给过程宏之前，该属性将从条目中剥离出来
 /// 
 /// 
 /// 
@@ -1217,14 +1309,14 @@
 /// 
 /// 派生过程宏 为派生(derive)属性定义新输入。
 /// 
-///     这类宏在给定输入结构体(struct)、枚举(enum)或联合体(union) token流的情况下创建新程序项。    (derive过程宏只能用在 struct 和 enum  和  union上)
+///     这类宏在给定输入结构体(struct)、枚举(enum)或联合体(union) token流的情况下创建新程序项。    【 derive 过程宏 只能用在 struct 和 enum  和  union 上】
 /// 
 ///     它们也可以定义派生宏辅助属性。
 ///     (辅助属性的定义方式是向 proc_macro_derive 属性增加 attributes(helper0, helper1, ..) 参数，该参数可包含用逗号)
 /// 
 /// 
 /// 
-/// 自定义派生宏由带有 proc_macro_derive属性和 (TokenStream) -> TokenStream签名的公有可见性函数定义
+/// 自定义派生宏由带有 proc_macro_derive 属性和 (TokenStream) -> TokenStream 签名的公有可见性函数定义
 /// 
 /// 
 /// 
